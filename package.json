@@ -1,0 +1,22 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "Nodemon src/app.js"
+  },
+  "keywords": [
+    "JavaScript",
+    "Backend",
+    "NodeJS",
+    "ExpressJs",
+    "MongoDB"
+  ],
+  "author": "Himanshu Sharma",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
