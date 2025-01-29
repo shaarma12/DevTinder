@@ -20,9 +20,17 @@ app.delete("/user", (req, res) => {
   // Delete the Data from Database.
   res.send("Data is Deleted Sucessfully from the Database!");
 });
+//  Query params:-
+// app.use("/users", (req, res) => {
+//   console.log(req.query);
+//   res.send("Hello!");
+// });
 
-app.use("/", (req, res) => {
-  res.send("Hello!");
+// dynamic routes:-
+
+app.use("/users/:firstName/:lastName/:dob", (req, res) => {
+  console.log(req.params);
+  res.send("dynamic route");
 });
 
 app.listen(8085, () => {
