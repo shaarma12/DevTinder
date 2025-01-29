@@ -2,8 +2,10 @@ const express = require("express");
 
 const app = express();
 
-app.use("/", (req, res) => {
-  res.send("Hello!");
+// order is always matter in the routes.
+
+app.use("/api/2", (req, res) => {
+  res.send("This another string from API page!");
 });
 
 app.use("/api", (req, res) => {
@@ -12,6 +14,10 @@ app.use("/api", (req, res) => {
 
 app.use("/login", (req, res) => {
   res.send("This is the Login Page!");
+});
+
+app.use("/", (req, res) => {
+  res.send("Hello!");
 });
 
 app.listen(8085, () => {
