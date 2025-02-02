@@ -6,11 +6,11 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 app.post("/signup", async (req, res) => {
   const userData = {
-    firstName: "Himanshu",
+    firstName: "Varun",
     lastName: "Sharma",
-    email: "himanshusharma1581@gmail.com",
-    password: "Himanshu@123",
-    age: 25,
+    email: "varunsharma1581@gmail.com",
+    password: "Varun@2223",
+    age: 23,
   };
 
   const user = new User(userData);
