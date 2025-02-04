@@ -3,15 +3,13 @@ const express = require("express");
 const app = express();
 
 const connectDB = require("./config/database");
+
 const User = require("./models/user");
+
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
-  const userData = {
-    firstName: "Varun",
-    lastName: "Sharma",
-    email: "varunsharma1581@gmail.com",
-    password: "Varun@2223",
-    age: 23,
-  };
+  const userData = req.body;
 
   const user = new User(userData);
 
@@ -20,6 +18,61 @@ app.post("/signup", async (req, res) => {
     res.send("User created successfully");
   } catch (err) {
     console.error("Something went wrong");
+    res.status(400).send("Something went wrong", err);
+  }
+});
+
+// for finding all the data from the database:-
+app.get("/feed", async (req, res) => {
+  const allFeedData = await User.find({});
+  try {
+    res.send(allFeedData);
+  } catch (error) {
+    res.status(400).send("Something went wrong", error);
+  }
+});
+
+// find or get the data by findById():-
+
+// app.get("/getUser", async (req, res) => {
+//   const userId = req.body.userId;
+//   try {
+//     const userData = await User.findById(userId);
+//     res.send(userData);
+//   } catch (err) {
+//     res.status(400).send("Something went wrong", err);
+//   }
+// });
+
+app.get("/getUser", async (req, res) => {
+  const firstName = req.body.firstName;
+  try {
+    const users = await User.find({ firstName });
+    res.send(users);
+  } catch (error) {
+    res.status(400).send("Something went wrong", error);
+  }
+});
+
+app.delete("/delete", async (req, res) => {
+  const userId = req.body.userId;
+  const user = await User.findByIdAndDelete(userId);
+  try {
+    res.send(user);
+  } catch (error) {
+    res.status(400).send("Something went wrong", error);
+  }
+});
+
+app.patch("/update", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndUpdate(userId, req.body, {
+      new: true,
+      upsert: true,
+    });
+    res.send(user);
+  } catch (err) {
     res.status(400).send("Something went wrong", err);
   }
 });
