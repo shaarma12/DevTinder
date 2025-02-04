@@ -5,6 +5,7 @@ const app = express();
 const connectDB = require("./config/database");
 
 const User = require("./models/user");
+const e = require("express");
 
 app.use(express.json());
 
@@ -44,10 +45,20 @@ app.get("/feed", async (req, res) => {
 //   }
 // });
 
-app.get("/getUser", async (req, res) => {
-  const firstName = req.body.firstName;
+app.get("/oneUser", async (req, res) => {
+  const email = req.body.email;
   try {
-    const users = await User.find({ firstName });
+    const user = await User.findOne({ email });
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("Something went wrong", err);
+  }
+});
+
+app.get("/getUser", async (req, res) => {
+  const email = req.body.email;
+  try {
+    const users = await User.find({ email });
     res.send(users);
   } catch (error) {
     res.status(400).send("Something went wrong", error);
@@ -72,6 +83,16 @@ app.patch("/update", async (req, res) => {
       upsert: true,
     });
     res.send(user);
+  } catch (err) {
+    res.status(400).send("Something went wrong", err);
+  }
+});
+
+app.put("/update", async (req, res) => {
+  const { userId, email } = req.body;
+  try {
+    await User.replaceOne({ _id: userId }, { email: email });
+    res.send("user updated successfully");
   } catch (err) {
     res.status(400).send("Something went wrong", err);
   }
