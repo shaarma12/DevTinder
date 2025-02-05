@@ -75,9 +75,28 @@ app.delete("/delete", async (req, res) => {
   }
 });
 
-app.patch("/update", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/update/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const updateData = req.body;
   try {
+    const isValidate = [
+      "firstName",
+      "lastName",
+      "password",
+      "age",
+      "photoURL",
+      "about",
+      "skills",
+    ];
+
+    const isUpated = Object.keys(updateData).every((k) =>
+      isValidate.includes(k)
+    );
+
+    if (!isUpated) {
+      throw new Error("Email is not an updated field");
+    }
+
     const user = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
       upsert: true,
