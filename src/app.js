@@ -5,7 +5,6 @@ const app = express();
 const connectDB = require("./config/database");
 
 const User = require("./models/user");
-const e = require("express");
 
 app.use(express.json());
 
@@ -16,10 +15,11 @@ app.post("/signup", async (req, res) => {
 
   try {
     await user.save();
+    // res.send(user);
     res.send("User created successfully");
   } catch (err) {
     console.error("Something went wrong");
-    res.status(400).send("Something went wrong", err);
+    res.status(400).send("Something went wrong :- " + err);
   }
 });
 
@@ -84,7 +84,7 @@ app.patch("/update", async (req, res) => {
     });
     res.send(user);
   } catch (err) {
-    res.status(400).send("Something went wrong", err);
+    res.status(400).send("Something went wrong:-" + err);
   }
 });
 
