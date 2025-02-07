@@ -1,5 +1,4 @@
 const express = require("express");
-const validate = require("./utils/validateSignUp");
 const bcrypt = require("bcrypt");
 const app = express();
 
