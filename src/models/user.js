@@ -74,11 +74,11 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
       trim: true,
-      validate(value) {
-        if (!(value.length > 1 && value.length < 30)) {
-          throw new Error("Skills must be between 1 and 30");
-        }
-      },
+      // validate(value) {
+      //   if (!(value.length > 1 && value.length < 30)) {
+      //     throw new Error("Skills must be between 1 and 30");
+      //   }
+      // },
     },
   },
   { timestamps: true }
