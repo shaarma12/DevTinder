@@ -52,15 +52,13 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
 
-    const ispasswordMatch = await bcrypt.compare(password, user.password);
+    const ispasswordMatch = user.comparePasswords(password);
 
     if (!ispasswordMatch) {
       throw new Error("invalid Credentials");
     }
 
-    const token = jwt.sign({ id: user._id }, "supersecretkey123@31", {
-      expiresIn: "1h",
-    });
+    const token = user.generateAuthToken();
 
     res.cookie("token", token);
 
@@ -81,6 +79,20 @@ app.get("/feed", authUser, async (req, res) => {
     res.send(user);
   } catch (error) {
     res.status(400).send("Something went wrong", error);
+  }
+});
+
+app.post("/sendConnection", authUser, async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    res.send(
+      user.firstName + " " + user.lastName + " sending connection request"
+    );
+  } catch (err) {
+    res.status(400).send("Something went wrong", err);
   }
 });
 
