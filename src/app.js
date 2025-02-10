@@ -1,13 +1,19 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const { authUser } = require("./middlewares/auth");
 const app = express();
 
 const connectDB = require("./config/database");
 
 const User = require("./models/user");
+
 const validateSignUp = require("./utils/validateSignUp");
 const validateLogin = require("./utils/validateLogin");
+
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -52,6 +58,12 @@ app.post("/login", async (req, res) => {
       throw new Error("invalid Credentials");
     }
 
+    const token = jwt.sign({ id: user._id }, "supersecretkey123@31", {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token);
+
     res.send("Login Successfull");
   } catch (err) {
     res.status(500).send("Something went wrong:-" + err);
@@ -59,10 +71,14 @@ app.post("/login", async (req, res) => {
 });
 
 // for finding all the data from the database:-
-app.get("/feed", async (req, res) => {
-  const allFeedData = await User.find({});
+app.get("/feed", authUser, async (req, res) => {
   try {
-    res.send(allFeedData);
+    const Id = req.userId;
+    const user = await User.findById({ _id: Id });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    res.send(user);
   } catch (error) {
     res.status(400).send("Something went wrong", error);
   }
@@ -80,77 +96,77 @@ app.get("/feed", async (req, res) => {
 //   }
 // });
 
-app.get("/oneUser", async (req, res) => {
-  const email = req.body.email;
-  try {
-    const user = await User.findOne({ email });
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("Something went wrong", err);
-  }
-});
+// app.get("/oneUser", async (req, res) => {
+//   const email = req.body.email;
+//   try {
+//     const user = await User.findOne({ email });
+//     res.send(user);
+//   } catch (err) {
+//     res.status(400).send("Something went wrong", err);
+//   }
+// });
 
-app.get("/getUser", async (req, res) => {
-  const email = req.body.email;
-  try {
-    const users = await User.find({ email });
-    res.send(users);
-  } catch (error) {
-    res.status(400).send("Something went wrong", error);
-  }
-});
+// app.get("/getUser", async (req, res) => {
+//   const email = req.body.email;
+//   try {
+//     const users = await User.find({ email });
+//     res.send(users);
+//   } catch (error) {
+//     res.status(400).send("Something went wrong", error);
+//   }
+// });
 
-app.delete("/delete", async (req, res) => {
-  const userId = req.body.userId;
-  const user = await User.findByIdAndDelete(userId);
-  try {
-    res.send(user);
-  } catch (error) {
-    res.status(400).send("Something went wrong", error);
-  }
-});
+// app.delete("/delete", async (req, res) => {
+//   const userId = req.body.userId;
+//   const user = await User.findByIdAndDelete(userId);
+//   try {
+//     res.send(user);
+//   } catch (error) {
+//     res.status(400).send("Something went wrong", error);
+//   }
+// });
 
-app.patch("/update/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  const updateData = req.body;
-  try {
-    const isValidate = [
-      "firstName",
-      "lastName",
-      "password",
-      "age",
-      "photoURL",
-      "about",
-      "skills",
-    ];
+// app.patch("/update/:userId", async (req, res) => {
+//   const userId = req.params.userId;
+//   const updateData = req.body;
+//   try {
+//     const isValidate = [
+//       "firstName",
+//       "lastName",
+//       "password",
+//       "age",
+//       "photoURL",
+//       "about",
+//       "skills",
+//     ];
 
-    const isUpated = Object.keys(updateData).every((k) =>
-      isValidate.includes(k)
-    );
+//     const isUpated = Object.keys(updateData).every((k) =>
+//       isValidate.includes(k)
+//     );
 
-    if (!isUpated) {
-      throw new Error("Email is not an updated field");
-    }
+//     if (!isUpated) {
+//       throw new Error("Email is not an updated field");
+//     }
 
-    const user = await User.findByIdAndUpdate(userId, req.body, {
-      new: true,
-      upsert: true,
-    });
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("Something went wrong:-" + err);
-  }
-});
+//     const user = await User.findByIdAndUpdate(userId, req.body, {
+//       new: true,
+//       upsert: true,
+//     });
+//     res.send(user);
+//   } catch (err) {
+//     res.status(400).send("Something went wrong:-" + err);
+//   }
+// });
 
-app.put("/update", async (req, res) => {
-  const { userId, email } = req.body;
-  try {
-    await User.replaceOne({ _id: userId }, { email: email });
-    res.send("user updated successfully");
-  } catch (err) {
-    res.status(400).send("Something went wrong", err);
-  }
-});
+// app.put("/update", async (req, res) => {
+//   const { userId, email } = req.body;
+//   try {
+//     await User.replaceOne({ _id: userId }, { email: email });
+//     res.send("user updated successfully");
+//   } catch (err) {
+//     res.status(400).send("Something went wrong", err);
+//   }
+// });
 
 connectDB()
   .then(() => {
