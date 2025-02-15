@@ -48,4 +48,38 @@ router.post("/send/:status/:userId", authUser, async (req, res) => {
   }
 });
 
+router.post("/review/:status/:requestId", authUser, async (req, res) => {
+  try {
+    const status = req.params.status;
+    const requestId = req.params.requestId;
+    console.log(requestId);
+    if (!["accepted", "rejected"].includes(status)) {
+      throw new Error("status is not correct");
+    }
+
+    const reviewStatus = await ConnectionRequest.findOne({
+      _id: requestId,
+      status: "interested",
+      toUserId: req.userId,
+    });
+
+    if (!reviewStatus) {
+      throw new Error("No pending connection request is present");
+    }
+
+    reviewStatus.status = status;
+
+    await reviewStatus.save();
+
+    res.json({
+      message: "Connection request updated successfully",
+      data: reviewStatus,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Something went Wrong:- ", error: err.message });
+  }
+});
+
 module.exports = router;
