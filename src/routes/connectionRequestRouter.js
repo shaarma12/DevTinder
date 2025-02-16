@@ -52,7 +52,6 @@ router.post("/review/:status/:requestId", authUser, async (req, res) => {
   try {
     const status = req.params.status;
     const requestId = req.params.requestId;
-    console.log(requestId);
     if (!["accepted", "rejected"].includes(status)) {
       throw new Error("status is not correct");
     }
