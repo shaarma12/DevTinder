@@ -1,6 +1,7 @@
 const express = require("express");
 const { authUser } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connection");
+const User = require("../models/user");
 const router = express.Router();
 
 router.get("/request", authUser, async (req, res) => {
@@ -48,6 +49,34 @@ router.get("/connection", authUser, async (req, res) => {
     });
 
     res.json({ message: "Getting all the connections", data: data });
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Something went wrong", error: err.message });
+  }
+});
+
+router.get("/feed", authUser, async (req, res) => {
+  try {
+    const hideData = await ConnectionRequest.find({
+      $or: [{ fromUserId: req.userId }, { toUserId: req.userId }],
+    }).select("fromUserId toUserId");
+
+    const uniqueData = new Set();
+
+    hideData.map((val) => {
+      uniqueData.add(val.fromUserId.toString());
+      uniqueData.add(val.toUserId.toString());
+    });
+
+    const feedData = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(uniqueData) } },
+        { _id: { $ne: req.userId } },
+      ],
+    }).select("firstName lastName age photoURL about skills");
+
+    res.json({ message: "Data Fetched Successfully", data: feedData });
   } catch (err) {
     res
       .status(400)
