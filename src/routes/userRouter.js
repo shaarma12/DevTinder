@@ -58,6 +58,13 @@ router.get("/connection", authUser, async (req, res) => {
 
 router.get("/feed", authUser, async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+
+    limit = limit > 25 ? 25 : limit;
+
+    const skip = (page - 1) * limit;
+
     const hideData = await ConnectionRequest.find({
       $or: [{ fromUserId: req.userId }, { toUserId: req.userId }],
     }).select("fromUserId toUserId");
@@ -74,7 +81,10 @@ router.get("/feed", authUser, async (req, res) => {
         { _id: { $nin: Array.from(uniqueData) } },
         { _id: { $ne: req.userId } },
       ],
-    }).select("firstName lastName age photoURL about skills");
+    })
+      .select("firstName lastName age photoURL about skills")
+      .skip(skip)
+      .limit(limit);
 
     res.json({ message: "Data Fetched Successfully", data: feedData });
   } catch (err) {
