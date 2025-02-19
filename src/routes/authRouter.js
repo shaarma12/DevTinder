@@ -55,7 +55,7 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token);
 
-    res.send("Login Successfull");
+    res.json({ message: "Login successful", data: user });
   } catch (err) {
     res.status(500).send("Something went wrong:-" + err);
   }
