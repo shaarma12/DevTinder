@@ -24,8 +24,7 @@ router.post("/signup", async (req, res) => {
     });
 
     await user.save();
-    // res.send(user);
-    res.send("User created successfully");
+    res.json({ message: "User created successfully" });
   } catch (err) {
     console.error("Something went wrong");
     res.status(400).send("Something went wrong :- " + err);
@@ -63,11 +62,7 @@ router.post("/login", async (req, res) => {
 
 // for logout the user:-
 router.post("/logout", (req, res) => {
-  res
-    .cookie("token", null, {
-      expires: new Date(Date.now()),
-    })
-    .json({ message: "Logout successfully" });
+  res.clearCookie("token").json({ message: "Logout successfully" });
 });
 
 module.exports = router;

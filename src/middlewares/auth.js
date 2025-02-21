@@ -10,7 +10,7 @@ const authUser = (req, res, next) => {
     req.userId = decoded.id;
     next();
   } catch (err) {
-    res.status(401).send("Something went wrong", err.message);
+    res.status(401).send(`Something went wrong: ${err.message}`);
   }
 };
 

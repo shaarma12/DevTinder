@@ -13,9 +13,9 @@ router.get("/view", authUser, async (req, res) => {
     if (!user) {
       throw new Error("User not found");
     }
-    res.send(user);
+    res.json({ data: user });
   } catch (error) {
-    res.status(400).send("Something went wrong", error);
+    res.status(400).send("Something went wrong " + error);
   }
 });
 
@@ -27,9 +27,9 @@ router.patch("/edit", authUser, async (req, res) => {
     Object.keys(req.body).map((value) => (user[value] = req.body[value]));
 
     await user.save();
-    res.send(
-      `${user.firstName} ${user.lastName} your profile updated succesfully!`
-    );
+    res.json({
+      message: `${user.firstName} ${user.lastName} your profile updated succesfully!`,
+    });
   } catch (err) {
     res
       .status(400)
