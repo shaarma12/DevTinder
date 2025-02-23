@@ -8,6 +8,7 @@ const validateEdit = (req) => {
     "photoURL",
     "about",
     "skills",
+    "gender",
   ];
 
   const isValidFields = Object.keys(req.body).every((field) =>
@@ -48,8 +49,11 @@ const validateEdit = (req) => {
     if (req.body.about.trim() === "") {
       throw new Error("About should not be empty");
     }
-    if (req.body.about.length < 30 || req.body.about.length > 100) {
-      throw new Error("Write about yourself in 30 to 100 characters");
+    if (
+      req.body.about.trim().length < 30 ||
+      req.body.about.trim().length > 225
+    ) {
+      throw new Error("Write about yourself in 30 to 225 characters");
     }
   }
 };

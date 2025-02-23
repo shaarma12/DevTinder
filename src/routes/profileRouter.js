@@ -27,8 +27,12 @@ router.patch("/edit", authUser, async (req, res) => {
     Object.keys(req.body).map((value) => (user[value] = req.body[value]));
 
     await user.save();
+
+    const updatedUser = await User.findById({ _id: req.userId });
+
     res.json({
       message: `${user.firstName} ${user.lastName} your profile updated succesfully!`,
+      data: updatedUser,
     });
   } catch (err) {
     res
