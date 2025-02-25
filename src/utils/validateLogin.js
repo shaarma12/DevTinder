@@ -7,7 +7,7 @@ const validateLogin = (req) => {
   }
 
   if (!validator.isEmail(email)) {
-    throw new Error("Something not correct with email");
+    throw new Error("Please Enter Correct Email ID");
   }
 };
 

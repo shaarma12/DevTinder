@@ -27,7 +27,7 @@ router.post("/signup", async (req, res) => {
     res.json({ message: "User created successfully" });
   } catch (err) {
     console.error("Something went wrong");
-    res.status(400).send("Something went wrong :- " + err);
+    res.status(400).send(err);
   }
 });
 
@@ -47,7 +47,7 @@ router.post("/login", async (req, res) => {
     const ispasswordMatch = await user.comparePasswords(password);
 
     if (!ispasswordMatch) {
-      throw new Error("invalid Credentials");
+      throw new Error("Invalid Credentials");
     }
 
     const token = user.generateAuthToken();
@@ -56,7 +56,7 @@ router.post("/login", async (req, res) => {
 
     res.json({ message: "Login successful", data: user });
   } catch (err) {
-    res.status(500).send("Something went wrong:-" + err);
+    res.status(500).send(err.message);
   }
 });
 
