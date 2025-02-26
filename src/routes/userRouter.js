@@ -9,10 +9,16 @@ router.get("/request", authUser, async (req, res) => {
     const getAllPendingRequests = await ConnectionRequest.find({
       toUserId: req.userId,
       status: "interested",
-    }).populate("fromUserId", "firstName lastName age photoURL about skills");
+    }).populate(
+      "fromUserId",
+      "firstName lastName age photoURL about skills gender"
+    );
 
     if (getAllPendingRequests.length === 0) {
-      return res.status(404).json({ message: "no pending request found" });
+      return res.status(200).json({
+        message: "no pending request found",
+        data: getAllPendingRequests,
+      });
     }
 
     res.json({
