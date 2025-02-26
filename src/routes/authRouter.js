@@ -11,7 +11,16 @@ router.post("/signup", async (req, res) => {
   try {
     validateSignUp(req);
 
-    const { email, password, firstName, lastName, age } = req.body;
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      age,
+      gender,
+      photoURL,
+      about,
+    } = req.body;
 
     const encyptedPassword = await bcrypt.hash(password, 10);
 
@@ -21,13 +30,16 @@ router.post("/signup", async (req, res) => {
       firstName: firstName,
       lastName: lastName,
       age: age,
+      gender: gender,
+      photoURL: photoURL,
+      about: about,
     });
 
     await user.save();
     res.json({ message: "User created successfully" });
   } catch (err) {
     console.error("Something went wrong");
-    res.status(400).send(err);
+    res.status(400).send(err.message);
   }
 });
 
