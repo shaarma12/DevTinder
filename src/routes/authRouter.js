@@ -36,7 +36,12 @@ router.post("/signup", async (req, res) => {
     });
 
     await user.save();
-    res.json({ message: "User created successfully" });
+
+    const token = user.generateAuthToken();
+
+    res.cookie("token", token);
+
+    res.json({ message: "User created successfully", data: user });
   } catch (err) {
     console.error("Something went wrong");
     res.status(400).send(err.message);
