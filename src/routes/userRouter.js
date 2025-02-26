@@ -34,11 +34,19 @@ router.get("/connection", authUser, async (req, res) => {
         { status: "accepted", fromUserId: req.userId },
       ],
     })
-      .populate("fromUserId", "firstName lastName age photoURL about skills")
-      .populate("toUserId", "firstName lastName age photoURL about skills");
+      .populate(
+        "fromUserId",
+        "firstName lastName age photoURL about skills gender"
+      )
+      .populate(
+        "toUserId",
+        "firstName lastName age photoURL about skills gender"
+      );
 
     if (connections.length === 0) {
-      return res.status(404).json({ message: "No connection found!" });
+      return res
+        .status(200)
+        .json({ message: "No Connection Found", data: connections });
     }
 
     const data = connections.map((row) => {

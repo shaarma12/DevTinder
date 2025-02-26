@@ -69,7 +69,7 @@ const userSchema = new mongoose.Schema(
     about: {
       type: String,
       default: "This is a Default about",
-      minLength: 30,
+      minLength: 5,
       maxLength: 225,
       trim: true,
     },
